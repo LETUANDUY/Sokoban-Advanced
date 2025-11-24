@@ -13,8 +13,7 @@ public class LevelManager
     private AsyncOperationHandle<SceneInstance>? currentSceneHandle;
     public LevelID CurrentLevel { get; private set; }
     private string CurrentScenePath => $"Assets/Scenes/Stage_{CurrentLevel.Stage}/{CurrentLevel.Stage}_{CurrentLevel.Index}.unity";
-
-    public MapController currentMapManager;
+    private MapController currentMapManager;
     public int MoveCount { get; private set; }
     public int MoveCountLimit { get; private set; }
     private int[] moveToGetStar = new int[3];
@@ -50,7 +49,7 @@ public class LevelManager
     //Tải lại level hiện tại
     public void ReloadLevel()
     {
-        Debug.Log("Reload Level");
+
     }
 
     //Tải level tiếp theo
@@ -105,6 +104,9 @@ public class LevelManager
     {
         MoveCount--;
         UIController.Instance.SetMoveCountUI(MoveCount, MoveCountLimit, moveToGetStar);
+
+        // if (MoveCount <= 0)
+        //     GameManager.Instance.GameOver();
     }
 
     //Tính số sao đạt được
@@ -163,6 +165,7 @@ public class LevelManager
         if (levelSelectBoxes.ContainsKey(nextKey))
         {
             levelStatusValue.Add(nextKey, 0);
+            UIController.Instance.NextStage();
             return;
         }
     }

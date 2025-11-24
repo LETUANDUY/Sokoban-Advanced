@@ -1,11 +1,43 @@
-
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using DG.Tweening;
+using System;
 
 public class UIController : MonoBehaviour
 {
     public static UIController Instance { get; private set; }
-   
+    private Tween CoinTween;
+    
+    [Header("Amount Bar")]
+    [SerializeField] private GameObject AmountBar;
+    [SerializeField] private TextMeshProUGUI CoinAmountText;
+    [SerializeField] private TextMeshProUGUI EnergyAmountText;
+    [SerializeField] private GameObject MinusEnergyEffect;
+
+    [Header("Main Panels")]
+    [SerializeField] private GameObject BlurPanel;
+
+    [SerializeField] private HomeUI HomePanel;
+
+    [Header("Popup Panel")]
+    [SerializeField] private PauseSettingPanel SettingPanel;
+    [SerializeField] private LevelCompletePanel levelCompletePanel;
+    [SerializeField] private LevelFailedPanel levelFailedPanel;
+    [SerializeField] private PauseSettingPanel PausePanel;
+    [SerializeField] private ConnectPanel ConnectPanel;
+
+    [Header("In Level Panel")]
+    [SerializeField] private InPlayLevelUI InLevelUiPanel;
+
+
+    [Header("Level Select Panel")]
+    [SerializeField] private LevelSelectUI LevelSelectPanel;
+    [SerializeField] private SpriteRenderer BackgroundImage;
 
     private void Awake()
     {
@@ -15,52 +47,228 @@ public class UIController : MonoBehaviour
             Destroy(gameObject);
     }
 
+    //===Xử lý hiển thị ========
+    public void ShowAmountBar()
+    {
+        AmountBar.SetActive(true);
+        CoinAmountText.text = GameManager.Instance.PlayerDataManager.PlayerData.Coin.ToString();
+        EnergyAmountText.text = GameManager.Instance.PlayerDataManager.PlayerData.Energy.ToString();
+    }
+
+    public void ChangeCoinAmountEffect()
+    {
+        int current = int.Parse(CoinAmountText.text);
+        CoinTween = DOTween.To(() => current, x =>
+        {
+            current = x;
+            CoinAmountText.text = current.ToString();
+
+        }, GameManager.Instance.PlayerDataManager.PlayerData.Coin, 1f).SetEase(Ease.Linear).SetUpdate(true).OnComplete(() =>
+        {
+            CoinAmountText.text = GameManager.Instance.PlayerDataManager.PlayerData.Coin.ToString();
+        });
+    }
+
+    public void ChangeEnergyAmountEffect()
+    {
+        int current = int.Parse(EnergyAmountText.text);
+        DOTween.To(() => current, x =>
+        {
+            current = x;
+            EnergyAmountText.text = current.ToString();
+
+        }, GameManager.Instance.PlayerDataManager.PlayerData.Energy, 1f).SetEase(Ease.Linear).SetUpdate(true).OnComplete(() =>
+        {
+            EnergyAmountText.text = GameManager.Instance.PlayerDataManager.PlayerData.Energy.ToString();
+        });
+    }
+
     public async void MinusEnergy()
     {
-       Debug.Log("Minus Energy UIController");
+        await Task.Delay(500);
+
+
+        MinusEnergyEffect.SetActive(true);
+        await Task.Delay(100);
+        EnergyAmountText.text = GameManager.Instance.PlayerDataManager.PlayerData.Energy.ToString();
+
+        await Task.Delay(400);
+        MinusEnergyEffect.SetActive(false);
+    }
+
+
+    //doi mau backgroundImage
+    public void SetBackgroundImage(Color color)
+    {
+        BackgroundImage.color = color;
+    }
+
+    public void ShowInPlayLevelUI()
+    {
+        Close();
+        InLevelUiPanel.Show();
+        AmountBar.SetActive(false);
+    }
+
+    public void SetMoveCountUI(int moveCount, int moveCountLimit, int[] moveToGetStar)
+    {
+        if(moveCount <= 0) return;
+        InLevelUiPanel.SetMoveCount(moveCount, moveCountLimit);
+        InLevelUiPanel.SetStarMarks(moveToGetStar, moveCountLimit);
     }
 
     //===========================================
     public void ShowGameOverPanel()
     {
-        Debug.Log("Show Game Over Panel");
+        Time.timeScale = 0;
+        levelFailedPanel.Show();
+        BlurPanel.SetActive(true);
     }
 
 
     //====== Xử lý hiển thị win panel========
     public void ShowLevelCompletePanel(int stars, int rewardAmount)
     {
-        Debug.Log($"Show Level Complete Panel with {stars} stars and reward {rewardAmount} coins");
+        Time.timeScale = 0;
+        BlurPanel.SetActive(true);
+        levelCompletePanel.ShowPanel(stars, rewardAmount);
+        AmountBar.SetActive(true);
     }
 
 
-    public void OnClickBackToLevelSelect()
+    //====== Xử lý hiển thị pause panel========
+    public void ShowPausePanel()
     {
-        Debug.Log("Back to Level Select");
+        Time.timeScale = 0;
+        PausePanel.Show();
+        BlurPanel.SetActive(true);
     }
 
-    public void SetMoveCountUI(int moveCount, int moveCountLimit, int[] moveToGetStar)
-    {
-        Debug.Log($"Set Move Count UI: {moveCount}/{moveCountLimit}");
-    }
-
-    public void ShowInPlayLevelUI()
-    {
-        Debug.Log("Show In-Play Level UI");
-    }
-
+    //====== Xử lý hiển thị connect panel========
     public void ShowConnecting()
     {
-        Debug.Log("Showing Connecting UI...");
+        Time.timeScale = 0;
+
+        if(!ConnectPanel.gameObject.activeInHierarchy)
+        {
+            ConnectPanel.Show();
+        }
+        
+        ConnectPanel.ShowConnecting();
+        BlurPanel.SetActive(true);
     }
+    
 
     public void ShowDisconnect()
     {
-        Debug.Log("Showing Disconnect UI...");
+        Time.timeScale = 0;
+
+        if(ConnectPanel == null) return;
+
+        if (!ConnectPanel.gameObject.activeInHierarchy)
+        {
+            ConnectPanel.Show();
+        }
+       
+        ConnectPanel.ShowDisconnect();
+        BlurPanel.SetActive(true);
     }
 
     public void HideConnectPanel()
     {
-        Debug.Log("Hiding Connect Panel UI...");
+
+        if(!ConnectPanel.gameObject.activeInHierarchy) return;
+        Time.timeScale = 1;
+        ConnectPanel.Hide();
+        BlurPanel.SetActive(false);
     }
+
+    
+    //====== Xử lý các button============
+    public void OnClickResume()
+    {
+        Time.timeScale = 1;
+        PausePanel.Hide();
+        SettingPanel.Hide();
+        BlurPanel.SetActive(false);
+    }
+
+    public void OnClickSetting()
+    {
+        Time.timeScale = 0;
+        SettingPanel.Show();
+        BlurPanel.SetActive(true);
+    }
+
+    public void OnClickHome()
+    {
+        Time.timeScale = 1;
+        Close();
+        HomePanel.Show();
+        AmountBar.SetActive(true);
+    }
+
+    public void OnClickPlay()
+    {
+        Close();
+        LevelSelectPanel.Show();
+        AmountBar.SetActive(true);
+    }
+
+    public void OnClickBackToLevelSelect()
+    {
+        GameManager.Instance.LevelManager.UnloadLevel();
+        GameManager.Instance.PlayerDataManager.SpendEnergy(1);
+        Close();
+        LevelSelectPanel.Show();
+        AmountBar.SetActive(true);
+    }
+
+    public void NextStage()
+    {
+        LevelSelectPanel.OnClickNextStage();
+    }
+
+    public async void OnClickRestart()
+    {
+        if (!GameManager.Instance.LevelManager.CheckEnergyAvailable()) return;
+
+        Close();
+        await Task.Delay(100);
+        GameManager.Instance.LevelManager.ReloadLevel();
+    }
+
+    public void OnClickNextLevel()
+    {
+        if (!GameManager.Instance.LevelManager.CheckEnergyAvailable()) return;
+
+        Close();
+        GameManager.Instance.LevelManager.LoadNextLevel();
+    }
+
+    public void OnClickShow(BasePanelController panel)
+    {
+        panel.Show();
+    }
+
+    public void OnClickCancel(BasePanelController panel)
+    {
+        panel.Hide();
+    }
+
+    private void Close()
+    {
+        Time.timeScale = 1;
+
+        levelCompletePanel.Hide();
+        levelFailedPanel.Hide();
+        InLevelUiPanel.Hide();
+        PausePanel.Hide();
+        SettingPanel.Hide();
+        LevelSelectPanel.Hide();
+
+        BlurPanel.SetActive(false);
+        HomePanel.Hide();
+    }
+    
 }
