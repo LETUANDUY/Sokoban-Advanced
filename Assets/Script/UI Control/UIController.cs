@@ -23,6 +23,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject BlurPanel;
 
     [SerializeField] private HomeUI HomePanel;
+    [SerializeField] private ShopUI ShopPanel;
+
 
     [Header("Popup Panel")]
     [SerializeField] private PauseSettingPanel SettingPanel;
@@ -33,7 +35,6 @@ public class UIController : MonoBehaviour
 
     [Header("In Level Panel")]
     [SerializeField] private InPlayLevelUI InLevelUiPanel;
-
 
     [Header("Level Select Panel")]
     [SerializeField] private LevelSelectUI LevelSelectPanel;
@@ -269,6 +270,8 @@ public class UIController : MonoBehaviour
 
         BlurPanel.SetActive(false);
         HomePanel.Hide();
+        ShopPanel.Hide();
+        
     }
     
 }
