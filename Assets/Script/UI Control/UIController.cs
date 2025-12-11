@@ -31,6 +31,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private LevelCompletePanel levelCompletePanel;
     [SerializeField] private LevelFailedPanel levelFailedPanel;
     [SerializeField] private PauseSettingPanel PausePanel;
+    [SerializeField] private EnergyPanel EnergyPanel;
     [SerializeField] private ConnectPanel ConnectPanel;
 
     [Header("In Level Panel")]
@@ -267,6 +268,7 @@ public class UIController : MonoBehaviour
         PausePanel.Hide();
         SettingPanel.Hide();
         LevelSelectPanel.Hide();
+        EnergyPanel.Hide();
 
         BlurPanel.SetActive(false);
         HomePanel.Hide();

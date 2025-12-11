@@ -13,12 +13,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int NumberOfLevelsAvailable;
     [SerializeField] private int CoinDefaultAmount;
     [SerializeField] private int MaxEnergy;
-    [SerializeField] private int currentEnergy;
+    [SerializeField] private int EnergyRegenerationTime;
+    public int EnergyCostToBuy { get; private set; } = 30;
+
+    private float timer;
+    private CancellationTokenSource saveLoopCTS;
+
 
     public PlayerDataManager PlayerDataManager { get; private set; }
     public LevelManager LevelManager { get; private set; }
-
-
     //====Singleton================
     private async void Awake()
     {
@@ -29,7 +32,6 @@ public class GameManager : MonoBehaviour
 
             PlayerDataManager = new PlayerDataManager();
             LevelManager = new LevelManager();
-
         }
         else
         {
@@ -37,20 +39,23 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-
         //Khởi tạo PlayerData và LevelData
         await PlayerDataManager.InitializeAsync(CoinDefaultAmount, MaxEnergy);
+        await Task.Delay(100); // Đợi một chút để đảm bảo dữ liệu đã được tải
 
         DateTime ntpTime = await TimeManager.TryGetNetworkTimeUntilSuccess();
 
-        Debug.Log($"Current time: {ntpTime}");
-       
-        await Task.Delay(100); // Đợi một chút để đảm bảo dữ liệu đã được tải
+        UpdateEnergy(ntpTime);
+
+        saveLoopCTS = new CancellationTokenSource();
+        UIController.Instance.ShowAmountBar();
+        await SaveTimeLoopAsync(saveLoopCTS.Token);
     }
+
 
     void Update()
     {
-        currentEnergy = PlayerDataManager.PlayerData.Energy;
+        RecoverEnergy();
     }
 
 
@@ -62,6 +67,7 @@ public class GameManager : MonoBehaviour
         int starAmountDifference = LevelManager.UpdateLevelStatus(star);
 
         //trừ đi năng lượng
+        if (PlayerDataManager.PlayerData.Energy == MaxEnergy) timer = 0;
         PlayerDataManager.SpendEnergy(1);
 
         //hiển thị ra ui 
@@ -82,6 +88,88 @@ public class GameManager : MonoBehaviour
         UIController.Instance.ShowGameOverPanel();
     }
 
+    //====Xử lý hồi năng lượng=========================
+
+    //Cập nhật lại năng lượng khi vào game
+    private void UpdateEnergy(DateTime now)
+    {
+        //Nếu năng lượng đã đầy thì không cần làm gì cả
+        if (PlayerDataManager.PlayerData.Energy >= MaxEnergy) return;
+
+        //tính toán thời gian đã trôi qua kể từ lần thoát game trước đó
+        TimeSpan passed = now - PlayerDataManager.PlayerData.LastQuitTime;
+        float savedTimer = PlayerDataManager.PlayerData.EnergyTimer;
+
+        int secondsPassed = (int)(passed.TotalSeconds + savedTimer);
+
+        int recovered = secondsPassed / EnergyRegenerationTime;
+        int remainder = secondsPassed % EnergyRegenerationTime;
+
+        recovered = Mathf.Min(recovered, MaxEnergy - PlayerDataManager.PlayerData.Energy);
+
+        //Cập nhật lại vào PlayerData
+        PlayerDataManager.AddEnergy(recovered);
+        UIController.Instance.ShowAmountBar();
+
+        timer = remainder;
+    }
+
+    //Hồi năng lượng theo thời gian
+    public void RecoverEnergy()
+    {
+        //tính toán thời gian hồi năng lượng
+        if (PlayerDataManager.PlayerData.Energy >= MaxEnergy) return;
+
+        timer += Time.unscaledDeltaTime;
+        if (timer >= EnergyRegenerationTime)
+        {
+            int energyToAdd = (int)(timer / EnergyRegenerationTime);
+
+            PlayerDataManager.AddEnergy(energyToAdd);
+
+            timer %= EnergyRegenerationTime;
+
+            //Cập nhật lên UI
+            UIController.Instance.ShowAmountBar();
+        }
+    }
+
+    //Lấy thời gian để hồi lại 1 năng lượng
+    public TimeSpan GetTimeToNextEnergy()
+    {
+        if (PlayerDataManager.PlayerData.Energy >= MaxEnergy)
+            return TimeSpan.Zero;
+
+        return TimeSpan.FromSeconds(EnergyRegenerationTime - timer);
+    }
+
+    //Lấy thời gian để hồi đầy năng lượng
+    public TimeSpan GetTimeToFullEnergy()
+    {
+        if (PlayerDataManager.PlayerData.Energy >= MaxEnergy)
+            return TimeSpan.Zero;
+
+        int energyMissing = MaxEnergy - PlayerDataManager.PlayerData.Energy;
+        double totalSeconds = (energyMissing - 1) * EnergyRegenerationTime + (EnergyRegenerationTime - timer);
+        return TimeSpan.FromSeconds(totalSeconds);
+    }
+
+    //Lưu thời gian hiện tại vào file định kỳ
+    private async Task SaveTimeLoopAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            DateTime ntpTime = await TimeManager.TryGetNetworkTimeUntilSuccess();
+
+            //Lưu lại thời gian hiện tại
+            PlayerDataManager.SaveEnergyTimer(ntpTime, timer);
+            Debug.Log("Đã lưu thời gian: " + ntpTime.ToString("yyyy-MM-dd HH:mm:ss"));
+            
+            await Task.Delay(TimeSpan.FromSeconds(10), token);
+        }
+    }
+    
+    
 
 }
 
