@@ -29,6 +29,9 @@ public class Teleporter : MonoBehaviour, IPowerRequire
             isTeleporting = true;
             Vector3 direction = transform.position - other.transform.position;
 
+            //Report task progress
+            Observer.PostEvent(EvenID.ReportTaskProgress, new object[] { TaskType.UseTeleporter,  1, true});
+
             //Bắt đầu dịch chuyển vật thể
             StartCoroutine(WaitAndTeleport(other, direction));
         }
@@ -104,6 +107,9 @@ public class Teleporter : MonoBehaviour, IPowerRequire
     IEnumerator WaitAndTeleport(Collider2D other, Vector2 direction)
     {
         yield return new WaitUntil(() => Vector2.Distance(other.transform.position, transform.position) < 0.1f);
+        
+        //Gửi sự kiện dịch chuyển
+        Observer.PostEvent(EvenID.Teleport, new object[] {TeleporterID, other, this.gameObject, direction });
     }
 
     private void OnDestroy()

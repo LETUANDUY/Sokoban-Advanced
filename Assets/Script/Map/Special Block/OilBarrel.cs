@@ -39,6 +39,7 @@ public class OilBarrel : MonoBehaviour, IResetLevel
             {
                 // Kích hoạt thùng dầu
                 Explode(0);
+                Observer.PostEvent(EvenID.ReportTaskProgress, new object[] { TaskType.BlowUpOilBarrel, 1, true});
             }
         }
     }

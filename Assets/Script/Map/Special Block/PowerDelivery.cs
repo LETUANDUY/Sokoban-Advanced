@@ -42,6 +42,9 @@ public class PowerDelivery : MonoBehaviour
     {
         if (collision.CompareTag("ElectricBox"))
         {
+            //Báo cáo nhiệm vụ
+            Observer.PostEvent(EvenID.ReportTaskProgress, new object[] { TaskType.SupplyPower, 1, true});
+
             // Cấp nguồn
             ChangePowerState(true);
         }

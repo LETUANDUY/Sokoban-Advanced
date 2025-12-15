@@ -27,6 +27,7 @@ public class ConveyorTile : MonoBehaviour, IResetLevel, IPowerRequire
     //Đổi hướng người chơi
     void OnTriggerEnter2D(Collider2D other)
     {
+        Observer.PostEvent(EvenID.ReportTaskProgress, new object[] { TaskType.UseConveyor, 1, true });   
         StartCoroutine(WaitAndChangeDirection(other));
         
     }

@@ -83,7 +83,6 @@ public class MagnetBox : Box
         joint.breakTorque = Mathf.Infinity;
         
         joints.Add(joint);
-
     }
 
     protected override void DoAnythingElse()
@@ -168,13 +167,10 @@ public class MagnetBox : Box
         {
             SyncMassToGroup(0.1f);
             StartCoroutine(CheckToMinusMoveCount(transform.position));
-           
         } else
         {
             SyncMassToGroup(10000f);
         }
-
-      
     }
 
     // Đồng bộ mass cho tất cả các box trong nhóm

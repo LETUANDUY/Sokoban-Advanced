@@ -17,7 +17,7 @@ public class FinishTile : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private SpriteRenderer IconSpriteRenderer;
     public bool isCompleted = false;
-   
+
     void OnTriggerEnter2D(Collider2D other)
     {
         string expectedTag = finishTileType switch
@@ -42,7 +42,6 @@ public class FinishTile : MonoBehaviour
             Observer.PostEvent(EvenID.CompleteBox, null);
             IconSpriteRenderer.sprite = iconSprites[4];
             IconSpriteRenderer.gameObject.SetActive(true);
-            
             
             return;
         }

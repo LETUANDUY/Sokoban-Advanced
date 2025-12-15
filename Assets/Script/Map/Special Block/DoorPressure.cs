@@ -19,6 +19,8 @@ public class DoorPressure : MonoBehaviour, IPowerRequire
     
     void OnTriggerEnter2D(Collider2D other)
     {
+       
+        Observer.PostEvent(EvenID.ReportTaskProgress, new object[] { TaskType.UseDoorPressure, 1, true});
         Invoke(nameof(changeState), 0.1f);
             
     }

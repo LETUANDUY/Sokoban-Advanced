@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
 
     public PlayerDataManager PlayerDataManager { get; private set; }
     public LevelManager LevelManager { get; private set; }
+    public DailyTaskManager DailyTaskManager;
+
     //====Singleton================
     private async void Awake()
     {
@@ -30,8 +32,11 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
+
             PlayerDataManager = new PlayerDataManager();
             LevelManager = new LevelManager();
+            DailyTaskManager = new DailyTaskManager();
+
         }
         else
         {
@@ -41,17 +46,21 @@ public class GameManager : MonoBehaviour
 
         //Khởi tạo PlayerData và LevelData
         await PlayerDataManager.InitializeAsync(CoinDefaultAmount, MaxEnergy);
+        await DailyTaskManager.InitializeAsync();
+
         await Task.Delay(100); // Đợi một chút để đảm bảo dữ liệu đã được tải
 
         DateTime ntpTime = await TimeManager.TryGetNetworkTimeUntilSuccess();
 
         UpdateEnergy(ntpTime);
+        DailyTaskManager.GetDailyTasks(ntpTime);
 
         saveLoopCTS = new CancellationTokenSource();
         UIController.Instance.ShowAmountBar();
         await SaveTimeLoopAsync(saveLoopCTS.Token);
     }
 
+    
 
     void Update()
     {
@@ -81,6 +90,8 @@ public class GameManager : MonoBehaviour
         LevelManager.Save();
         PlayerDataManager.AddCoin(starAmountDifference * 10);
 
+        //Báo cáo tiến trình nhiệm vụ
+        DailyTaskManager.ReportProgressOnCompleteLevels();
     }
 
     public void GameOver()

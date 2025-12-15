@@ -33,6 +33,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private PauseSettingPanel PausePanel;
     [SerializeField] private EnergyPanel EnergyPanel;
     [SerializeField] private ConnectPanel ConnectPanel;
+    [SerializeField] private DailyMissionPanel DailyMissionPanel;
 
     [Header("In Level Panel")]
     [SerializeField] private InPlayLevelUI InLevelUiPanel;
@@ -186,6 +187,28 @@ public class UIController : MonoBehaviour
     }
 
     
+   
+    //====== Xử lý hiển thị Daily Mission panel========
+    public void ShowDailyMissionPanel()
+    {
+        Time.timeScale = 0;
+        DailyMissionPanel.Show();
+        BlurPanel.SetActive(true);
+    }
+
+    public void HideDailyMissionPanel()
+    {
+        Time.timeScale = 1;
+        DailyMissionPanel.Hide();
+        BlurPanel.SetActive(false);
+    }
+
+    public void UpdateDailyMissionPanel()
+    {
+        DailyMissionPanel.MissionsUiUpdate();
+    }
+
+    
     //====== Xử lý các button============
     public void OnClickResume()
     {
@@ -269,6 +292,8 @@ public class UIController : MonoBehaviour
         SettingPanel.Hide();
         LevelSelectPanel.Hide();
         EnergyPanel.Hide();
+        DailyMissionPanel.Hide();
+
 
         BlurPanel.SetActive(false);
         HomePanel.Hide();

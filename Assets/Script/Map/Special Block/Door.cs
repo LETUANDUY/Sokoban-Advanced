@@ -83,6 +83,12 @@ public class Door : MonoBehaviour, IResetLevel
                 door.CloseDoor();
             }
         }
+
+        if (IsBlocked())
+        {
+            Observer.PostEvent(EvenID.ReportTaskProgress, new object[] { TaskType.BlockDoor, 1, false});
+        }
+            
     }
     
     /// Xử lý sự kiện thay đổi trạng thái cửa

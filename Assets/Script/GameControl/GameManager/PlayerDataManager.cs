@@ -75,7 +75,40 @@ public class PlayerDataManager
         SaveSystem.SavePlayerData(playerData);
     }
 
+    //====Xử lý dữ liệu nhiệm vụ=========================
+    public void SaveDailyTaskData(Dictionary<TaskType, int> dailyTasks)
+    {
+        List<int> taskIDs = new List<int>();
+        List<int> taskProgress = new List<int>();
+
+        foreach (var task in dailyTasks)
+        {
+            taskIDs.Add((int)task.Key);
+            taskProgress.Add(task.Value);
+        }
+
+        // Update player data with the new tasks
+        playerData.DailyTaskID = taskIDs;
+        playerData.DailyTaskProgress = taskProgress;
+        
+
+        SaveSystem.SavePlayerData(playerData);
+    }
+
+    public void ClaimReward()
+    {
+       
+        playerData.DailyClaimed += 1;
+        SaveSystem.SavePlayerData(playerData);
+    }
+
+    public void RestClaimed()
+    {
+        playerData.DailyClaimed = 0;
+        SaveSystem.SavePlayerData(playerData);
+    }
     
+
 
     public void Save()
     {
