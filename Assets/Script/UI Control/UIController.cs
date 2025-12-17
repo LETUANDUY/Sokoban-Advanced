@@ -23,6 +23,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject BlurPanel;
 
     [SerializeField] private HomeUI HomePanel;
+    [SerializeField] private SkinSelectUI SkinSelectPanel;
     [SerializeField] private ShopUI ShopPanel;
 
 
@@ -297,6 +298,7 @@ public class UIController : MonoBehaviour
 
         BlurPanel.SetActive(false);
         HomePanel.Hide();
+        SkinSelectPanel.Hide();
         ShopPanel.Hide();
         
     }

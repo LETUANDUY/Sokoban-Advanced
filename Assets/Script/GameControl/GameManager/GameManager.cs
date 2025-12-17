@@ -44,9 +44,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        //Khởi tạo PlayerData và LevelData
+          //Khởi tạo PlayerData và LevelData
         await PlayerDataManager.InitializeAsync(CoinDefaultAmount, MaxEnergy);
         await DailyTaskManager.InitializeAsync();
+        await PlayerDataManager.LoadSkinDataAsync();
 
         await Task.Delay(100); // Đợi một chút để đảm bảo dữ liệu đã được tải
 

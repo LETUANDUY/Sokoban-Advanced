@@ -11,9 +11,10 @@ public class PlayerDataManager
     private PlayerData playerData = new();
     public PlayerData PlayerData => playerData;
 
+    private Dictionary<int, SkinSO> skinDataDictionary = new();
+    public Dictionary<int, SkinSO> SkinDataDictionary => skinDataDictionary;
 
     private int maxEnergy;
-
 
     public async Task InitializeAsync(int coinDefaultAmount, int MaxEnergy)
     {
@@ -74,6 +75,51 @@ public class PlayerDataManager
 
         SaveSystem.SavePlayerData(playerData);
     }
+
+    //====Xử lý dữ liệu skin=========================
+
+    public void BuySkin(int skinID)
+    {   
+        // nếu đã sở hữu skin thì không làm gì cả
+        if (CheckSkinOwned(skinID)) return;
+
+        // nếu không đủ xu thì không làm gì cả
+        if (CheckCoinEnough(skinDataDictionary[skinID].Price))
+        {
+            // trừ xu và thêm skin vào danh sách sở hữu
+            SpendCoin(skinDataDictionary[skinID].Price);
+            playerData.SkinOwned.Add(skinID);
+            SaveSystem.SavePlayerData(playerData);
+        }
+    }
+
+    // trang bị skin
+    public void EquipSkin(int skinID)
+    {
+        if (CheckSkinOwned(skinID))
+        {
+            // trang bị skin và lưu dữ liệu
+            playerData.SkinEquipped = skinID;
+            SaveSystem.SavePlayerData(playerData);
+        }
+    }
+
+    // lấy skin đang được trang bị
+    public SkinSO GetEquippedSkin()
+    {
+        if (skinDataDictionary.TryGetValue(playerData.SkinEquipped, out var skin))
+        {
+            return skin;
+        }
+        return null;
+    }
+
+    // kiểm tra skin đã sở hữu chưa
+    public bool CheckSkinOwned(int skinID)
+    {
+        return playerData.SkinOwned.Contains(skinID);
+    }
+
 
     //====Xử lý dữ liệu nhiệm vụ=========================
     public void SaveDailyTaskData(Dictionary<TaskType, int> dailyTasks)
@@ -142,5 +188,24 @@ public class PlayerDataManager
         }
     }
     
+    //====Xử lý dữ liệu skin từ Addressables=========================
+    public async Task LoadSkinDataAsync()
+    {
+        var handle = Addressables.LoadAssetsAsync<SkinSO>("SkinData", null);
+        var result = await handle.Task;
+
+        if (handle.Status == AsyncOperationStatus.Succeeded)
+        {
+            foreach (var skin in result)
+            {
+                skinDataDictionary[skin.SkinID] = skin;
+                Debug.Log($"Loaded skin: {skin.SkinName}");
+            }
+        }
+        else
+        {
+            Debug.LogError("Failed to load skin data from Addressables!");
+        }
+    }
    
 }

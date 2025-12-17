@@ -24,7 +24,16 @@ public class Player : MonoBehaviour, IResetLevel, IMoveable
 
     void Awake()
     {
+        Interface.SetActive(false);
+        Interface = null;
         
+        GameObject currentSkin = PoolManager.Instance.Get(GameManager.Instance.PlayerDataManager.GetEquippedSkin().SkinPrefab);
+        currentSkin.transform.SetParent(this.transform);
+
+        Interface = currentSkin;
+        Interface.transform.localPosition = Vector3.zero;
+        Interface.transform.localScale = Vector3.one;
+
         particle = Interface.GetComponentInChildren<ParticleSystem>();
         originalPosition = transform.localPosition;
     }
