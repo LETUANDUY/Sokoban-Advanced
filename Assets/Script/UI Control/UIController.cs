@@ -38,6 +38,7 @@ public class UIController : MonoBehaviour
 
     [Header("In Level Panel")]
     [SerializeField] private InPlayLevelUI InLevelUiPanel;
+     [SerializeField] private GuidePanel GuidePanel;
 
     [Header("Level Select Panel")]
     [SerializeField] private LevelSelectUI LevelSelectPanel;
@@ -120,6 +121,13 @@ public class UIController : MonoBehaviour
         InLevelUiPanel.SetMoveCount(moveCount, moveCountLimit);
         InLevelUiPanel.SetStarMarks(moveToGetStar, moveCountLimit);
     }
+
+    
+    public void DisplayGuide(List<GuideDisplayInfo> guideTypes)
+    {
+        GuidePanel.ShowGuide(guideTypes);
+    }
+
 
     //===========================================
     public void ShowGameOverPanel()
