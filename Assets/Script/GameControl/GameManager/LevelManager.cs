@@ -50,6 +50,12 @@ public class LevelManager
     public void ReloadLevel()
     {
 
+        if (currentMapManager == null)
+        {
+            Debug.LogError("Current Map Manager is not set. Cannot reload level.");
+            return;
+        }
+        currentMapManager.ResetMap();
     }
 
     //Tải level tiếp theo

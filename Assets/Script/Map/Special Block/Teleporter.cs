@@ -15,6 +15,7 @@ public class Teleporter : MonoBehaviour, IPowerRequire
     [SerializeField] private BoxCollider2D boxCollider2D;
     [SerializeField] private GameObject EnergyRing;
     [SerializeField] private LayerMask obstacleLayer;
+    [SerializeField] private FxAudioDataSO TeleportAudioData;
 
     void  Awake()
     {
@@ -110,6 +111,9 @@ public class Teleporter : MonoBehaviour, IPowerRequire
         
         //Gửi sự kiện dịch chuyển
         Observer.PostEvent(EvenID.Teleport, new object[] {TeleporterID, other, this.gameObject, direction });
+
+        //Chạy âm thanh hiệu ứng dịch chuyển ở đây
+        Observer.PostEvent(EvenID.PlayFX, TeleportAudioData);
     }
 
     private void OnDestroy()

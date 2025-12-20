@@ -9,6 +9,8 @@ public class PowerDelivery : MonoBehaviour
     private List<IPowerRequire> powerReceivers = new() { };
     public GameObject LinePrefab ;
     [SerializeField] private List<LineRenderer> Wires = new() { };
+    [SerializeField] private FxAudioDataSO PowerOnAudioData;
+    [SerializeField] private FxAudioDataSO PowerOffAudioData;
 
 
     void Awake()
@@ -47,6 +49,9 @@ public class PowerDelivery : MonoBehaviour
 
             // Cấp nguồn
             ChangePowerState(true);
+
+            // Chạy âm thanh hiệu ứng cấp nguồn
+            Observer.PostEvent(EvenID.PlayFX, PowerOnAudioData);
         }
     }
 
@@ -55,6 +60,9 @@ public class PowerDelivery : MonoBehaviour
         if (collision.CompareTag("ElectricBox"))
         {
             ChangePowerState(false);
+
+            // Chạy âm thanh hiệu ứng ngắt nguồn
+            Observer.PostEvent(EvenID.PlayFX, PowerOffAudioData);
         }
     }
 

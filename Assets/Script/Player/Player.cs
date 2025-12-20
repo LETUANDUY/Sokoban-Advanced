@@ -26,7 +26,7 @@ public class Player : MonoBehaviour, IResetLevel, IMoveable
     {
         Interface.SetActive(false);
         Interface = null;
-        
+
         GameObject currentSkin = PoolManager.Instance.Get(GameManager.Instance.PlayerDataManager.GetEquippedSkin().SkinPrefab);
         currentSkin.transform.SetParent(this.transform);
 

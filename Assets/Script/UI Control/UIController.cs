@@ -38,7 +38,7 @@ public class UIController : MonoBehaviour
 
     [Header("In Level Panel")]
     [SerializeField] private InPlayLevelUI InLevelUiPanel;
-     [SerializeField] private GuidePanel GuidePanel;
+    [SerializeField] private GuidePanel GuidePanel;
 
     [Header("Level Select Panel")]
     [SerializeField] private LevelSelectUI LevelSelectPanel;
@@ -122,7 +122,6 @@ public class UIController : MonoBehaviour
         InLevelUiPanel.SetStarMarks(moveToGetStar, moveCountLimit);
     }
 
-    
     public void DisplayGuide(List<GuideDisplayInfo> guideTypes)
     {
         GuidePanel.ShowGuide(guideTypes);
@@ -195,8 +194,6 @@ public class UIController : MonoBehaviour
         BlurPanel.SetActive(false);
     }
 
-    
-   
     //====== Xử lý hiển thị Daily Mission panel========
     public void ShowDailyMissionPanel()
     {
@@ -217,7 +214,7 @@ public class UIController : MonoBehaviour
         DailyMissionPanel.MissionsUiUpdate();
     }
 
-    
+
     //====== Xử lý các button============
     public void OnClickResume()
     {
@@ -302,7 +299,6 @@ public class UIController : MonoBehaviour
         LevelSelectPanel.Hide();
         EnergyPanel.Hide();
         DailyMissionPanel.Hide();
-
 
         BlurPanel.SetActive(false);
         HomePanel.Hide();

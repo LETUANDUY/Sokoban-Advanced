@@ -13,7 +13,7 @@ public abstract class BasePanelController : MonoBehaviour
     [SerializeField] protected float AnimationTimeIn = 0.5f;
     [SerializeField] protected float AnimationTimeOut = 0.3f;
     [SerializeField] protected bool IsAnimation = false;
-
+    [SerializeField] protected FxAudioDataSO panelShowFx;
 
     public virtual void Show()
     {
@@ -38,7 +38,7 @@ public abstract class BasePanelController : MonoBehaviour
         canvasGroup.alpha = 0;
         transform.localScale = Vector3.zero;
 
-   
+        Observer.PostEvent(EvenID.PlayFX, panelShowFx);
 
         Sequence seq = DOTween.Sequence();
         seq.SetUpdate(true); 

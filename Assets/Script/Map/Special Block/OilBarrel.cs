@@ -10,6 +10,7 @@ public class OilBarrel : MonoBehaviour, IResetLevel
     [SerializeField] private GameObject Mark;
     [SerializeField] private float ActiveDistance = 2f;
     [SerializeField] private BoxCollider2D boxCollider2D;
+    [SerializeField] private FxAudioDataSO ExplosionAudioData;
     [SerializeField] private LayerMask BoxLayer; // Thêm layer mask để tối ưu
     public bool isExploded = false;
     private float checkInterval = 0.1f; // Giảm tần suất kiểm tra
@@ -80,6 +81,7 @@ public class OilBarrel : MonoBehaviour, IResetLevel
         }
 
         yield return new WaitForSeconds(0.2f);
+        Observer.PostEvent(EvenID.PlayFX, ExplosionAudioData);
 
         yield return new WaitForSeconds(0.5f);
         boxCollider2D.enabled = false;

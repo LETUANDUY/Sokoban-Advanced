@@ -86,5 +86,8 @@ public class EnergyPanel : BasePanelController
 
         UIController.Instance.ChangeCoinAmountEffect();
         UIController.Instance.ChangeEnergyAmountEffect();
+
+        //báo cáo tiến độ nhiệm vụ mua năng lượng
+        Observer.PostEvent(EvenID.ReportTaskProgress, new object[] { TaskType.BuyEnergy, 1, false});
     }
 }

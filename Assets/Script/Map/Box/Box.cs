@@ -8,6 +8,8 @@ public class Box : MonoBehaviour, IMoveable, IResetLevel
 	[SerializeField] protected float gridOffset = 0f;
 	[SerializeField] protected Rigidbody2D rb;
 	[SerializeField] protected float velocitySnapThreshold = 0.01f;
+	[SerializeField] protected FxAudioDataSO MoveFailAudioData;
+	[SerializeField] protected FxAudioDataSO MoveAudioData;
 	private Vector2 originalPosition;
 
 	private bool isSnapped = false;
@@ -59,11 +61,21 @@ public class Box : MonoBehaviour, IMoveable, IResetLevel
         {
             rb.mass = 0.1f;
 			StartCoroutine(CheckToMinusMoveCount(transform.position));
+            Observer.PostEvent(EvenID.PlayFX, MoveAudioData);
 
         } else
         {
             rb.mass = 10000;
         }
+
+		if (other.gameObject.CompareTag("MagneticBox") 
+			|| other.gameObject.CompareTag("FireBox") 
+			|| other.gameObject.CompareTag("ElectricBox") 
+			|| other.gameObject.CompareTag("StandardBox"))
+		{
+			Observer.PostEvent(EvenID.PlayFX, MoveFailAudioData);
+		}
+
     }
 
 

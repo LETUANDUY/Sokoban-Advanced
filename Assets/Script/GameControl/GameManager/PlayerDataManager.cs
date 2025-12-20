@@ -16,6 +16,7 @@ public class PlayerDataManager
 
     private int maxEnergy;
 
+
     public async Task InitializeAsync(int coinDefaultAmount, int MaxEnergy)
     {
 
@@ -75,6 +76,7 @@ public class PlayerDataManager
 
         SaveSystem.SavePlayerData(playerData);
     }
+
 
     //====Xử lý dữ liệu skin=========================
 
@@ -155,7 +157,6 @@ public class PlayerDataManager
     }
     
 
-
     public void Save()
     {
         SaveSystem.SavePlayerData(playerData);
@@ -207,5 +208,4 @@ public class PlayerDataManager
             Debug.LogError("Failed to load skin data from Addressables!");
         }
     }
-   
 }

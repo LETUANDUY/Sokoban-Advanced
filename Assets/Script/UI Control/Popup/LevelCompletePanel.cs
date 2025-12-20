@@ -12,6 +12,7 @@ public class LevelCompletePanel : BasePanelController
     [SerializeField] private TextMeshProUGUI LevelText;
     [SerializeField] private GameObject[] Stars;
     [SerializeField] private TextMeshProUGUI RewardText;
+    [SerializeField] private FxAudioDataSO StarPopup;
     [SerializeField] private GameObject Reward;
     [SerializeField] private RectTransform CoinBar;
     [SerializeField] private GameObject RewardCoin;
@@ -47,6 +48,7 @@ public class LevelCompletePanel : BasePanelController
         for (int i = 0; i < star && i < Stars.Length; i++)
         {
             Stars[i].SetActive(true);
+            Observer.PostEvent(EvenID.PlayFX, StarPopup);
             await Task.Delay((int)(starPopupDelay * 1000));
         }
     }
