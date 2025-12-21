@@ -8191,7 +8191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 139eb7c3efc5ba44d93c0bb8622ae1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NumberOfLevelsAvailable: 18
+  NumberOfLevelsAvailable: 5
   CoinDefaultAmount: 9999
   MaxEnergy: 20
   EnergyRegenerationTime: 300

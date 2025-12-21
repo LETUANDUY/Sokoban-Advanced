@@ -15,6 +15,16 @@ MonoBehaviour:
   m_GroupName: Level Data Group
   m_GUID: d8f6959ffc5e1124c9f357e459599ed0
   m_SerializeEntries:
+  - m_GUID: 0e81ac837dbda98469cd559db97e891d
+    m_Address: Assets/Scenes/Stage_1/1_5.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3fc1d4eb75f7e9f42ab6ff949fceac9f
+    m_Address: Assets/Scenes/Stage_1/1_4.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 446298200defa8b488b1a5b38938eafd
     m_Address: Assets/Scenes/Stage_1/1_1.unity
     m_ReadOnly: 0
