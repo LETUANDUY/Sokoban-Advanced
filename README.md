@@ -5,7 +5,7 @@
 **Sokoban Advanced** is a 2D puzzle mobile game developed with **Unity**, inspired by the classic Sokoban gameplay and extended with modern mechanics such as special boxes, interactive environments, daily missions, energy systems, and in-game shops.
 
 🔗 **Release (APK):**  
-https://github.com/ND-Tuan/Sokoban-Advanced/releases/tag/v1
+https://github.com/LETUANDUY/Sokoban-Advanced/releases/tag/game
 
 ---
 
